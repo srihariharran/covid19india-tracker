@@ -2,9 +2,10 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+// Importing Chart JS Packages
 import DoughnutChart from './components/doughnutChart';
-// import BarChart from './components/barChart';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+// Importing CSS Files
 import '../static/css/color.css'
 import '../static/css/main.css'
 import stateList from  '../static/json/stateList.json'
@@ -15,6 +16,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.bundle'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'font-awesome/css/font-awesome.min.css'; 
+
+import Chart from "react-apexcharts";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -36,19 +39,27 @@ function Covid19IndiaTracker()
             setOriginalData(responseData)
             setBarChartData(
                 {
-                    labels: ['Tested','Confirmed','Recovered','Deceased'],
-                    datasets: [
-                    {
-                        data: [(responseData["AN"]['total'].tested),(responseData["AN"]['total'].confirmed),(responseData["AN"]['total'].recovered),(responseData["AN"]['total'].deceased)],
-                        backgroundColor: [
-                        '#ffd900','#ff001e','#16e000','#8b8b8b'
-                        ],
-                        borderColor: [
-                            '#ffd900','#ff001e','#16e000','#8b8b8b'
-                        ],
-                        borderWidth: 3,
+                    
+                    options: {
+                        chart: {
+                            id: "basic-bar"
+                        },
+                        xaxis: {
+                            categories: ['Confirmed','Recovered','Deceased']
+                        },
+                        plotOptions: {
+                            bar: {
+                              borderRadius: 4,
+                              horizontal: true,
+                            }
+                          },
                     },
-                    ],
+                    series: [
+                        {
+                        name: ['Confirmed','Recovered','Deceased'],
+                        data: [(responseData["AN"]['total'].confirmed),(responseData["AN"]['total'].recovered),(responseData["AN"]['total'].deceased)],
+                        }
+                    ]
                 }
             )
             setDataStatus(true)
@@ -60,6 +71,34 @@ function Covid19IndiaTracker()
     },[])
 
     
+    const getStateWiseChart = (event) => {
+        const { name, value } = event.target
+        setBarChartData(
+            {
+                
+                options: {
+                    chart: {
+                        id: "basic-bar"
+                    },
+                    xaxis: {
+                        categories: ['Confirmed','Recovered','Deceased']
+                    },
+                    plotOptions: {
+                        bar: {
+                          borderRadius: 4,
+                          horizontal: true,
+                        }
+                      },
+                },
+                series: [
+                    {
+                    name: ['Confirmed','Recovered','Deceased'],
+                    data: [(originalData[value]['total'].confirmed),(originalData[value]['total'].recovered),(originalData[value]['total'].deceased)],
+                    }
+                ]
+            }
+        )
+    }
 
     
     // Function to Display State wise Data
@@ -67,46 +106,66 @@ function Covid19IndiaTracker()
     const DisplayStateList = () => {
         return(
             <div>
-                <div className="col-sm-12 m-2">
-                    <div className="col-sm-9 table-responsive">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>State</th>
-                                    <th>Confirmed</th>
-                                    <th>Deceased</th>
-                                    <th>Recovered</th>
-                                    <th>Tested</th>
-                                    <th>1st Dose Vaccination</th>
-                                    <th>2nd Dose Vaccination</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                Object.keys(originalData).map((data)=>(
-                                    (data!='TT')?
-                                        <tr>
-                                            <td>{stateList[data]}</td>
-                                            <td>{originalData[data]['total'].confirmed.toLocaleString()}</td>
-                                            <td>{originalData[data]['total'].deceased.toLocaleString()}</td>
-                                            <td>{originalData[data]['total'].recovered.toLocaleString()}</td>
-                                            <td>{originalData[data]['total'].tested.toLocaleString()}</td>
-                                            <td>{originalData[data]['total'].vaccinated1.toLocaleString()}</td>
-                                            <td>{originalData[data]['total'].vaccinated2.toLocaleString()}</td>
-                                        </tr>
-                                    :
-                                        ''
-                                ))
-                            }
-                            </tbody>
-                        
-                        
-                        
-                        </table>
-                        
-                    </div>
-                    <div className="col-sm-2">
-                        {/* <BarChart data={barChartData} /> */}
+                <div className="col-sm-12">
+                    <div className="row">
+                        <div className="col-sm-9 table-responsive">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>State</th>
+                                        <th>Confirmed</th>
+                                        <th>Recovered</th>
+                                        <th>Deceased</th>
+                                        <th>Tested</th>
+                                        <th>1st Dose Vaccination</th>
+                                        <th>2nd Dose Vaccination</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    Object.keys(originalData).map((data)=>(
+                                        (data!='TT')?
+                                            <tr>
+                                                <td>{stateList[data]}</td>
+                                                <td>{originalData[data]['total'].confirmed.toLocaleString()}</td>
+                                                <td>{originalData[data]['total'].recovered.toLocaleString()}</td>
+                                                <td>{originalData[data]['total'].deceased.toLocaleString()}</td>
+                                                <td>{originalData[data]['total'].tested.toLocaleString()}</td>
+                                                <td>{originalData[data]['total'].vaccinated1.toLocaleString()}</td>
+                                                <td>{originalData[data]['total'].vaccinated2.toLocaleString()}</td>
+                                            </tr>
+                                        :
+                                            ''
+                                    ))
+                                }
+                                </tbody>
+                            
+                            
+                            
+                            </table>
+                            
+                        </div>
+                        <div className="col-sm-3">
+                            <div className="col-sm-12">
+                                <select className="form-select" onChange={getStateWiseChart}>
+                                    {
+                                        Object.keys(originalData).map((data)=>(
+                                            (data!='TT')?
+                                            <option value={data}>{stateList[data]}</option>
+                                            :
+                                            ''
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <br/>
+                            <Chart
+                                options={barChartData.options}
+                                series={barChartData.series}
+                                type="bar"
+                                width="330"
+                            />
+                        </div>
                     </div>
                 </div>
                 
