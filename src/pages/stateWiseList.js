@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
+import { useParams } from "react-router-dom";
 // Importing Chart JS Packages
 import DoughnutChart from './components/doughnutChart';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -24,9 +24,12 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Covid 19 India Tracker Function
 
-function Covid19IndiaTracker()
+function StateWiseListPage()
 {
-    let navigate = useNavigate()
+
+    const { state } = useParams();
+    console.log(state)
+    // const district = this.props.match.params.district;
     // State variable to maintain original json data from source
     const [originalData,setOriginalData] = useState({});
 
@@ -60,8 +63,22 @@ function Covid19IndiaTracker()
                     },
                     series: [
                         {
-                        name: ['Confirmed','Recovered','Deceased'],
-                        data: [(responseData["AN"]['total'].confirmed),(responseData["AN"]['total'].recovered),(responseData["AN"]['total'].deceased)],
+                            name: ['Confirmed','Recovered','Deceased'],
+                            data:[0,0,0]
+                            // data: [
+                            //     (responseData[state]['districts'][districtName]['total'].confirmed)?
+                            //     responseData[state]['districts'][districtName]['total'].confirmed.toLocaleString()
+                            //     :
+                            //     '0',
+                            //     (responseData[state]['districts'][districtName]['total'].recovered)?
+                            //     responseData[state]['districts'][districtName]['total'].recovered.toLocaleString()
+                            //     :
+                            //     '0',
+                            //     (responseData[state]['districts'][districtName]['total'].deceased)?
+                            //     responseData[state]['districts'][districtName]['total'].deceased.toLocaleString()
+                            //     :
+                            //     '0'
+                            // ],
                         }
                     ]
                 }
@@ -74,13 +91,11 @@ function Covid19IndiaTracker()
 
     },[])
 
-    const goToStatePage = (data) => {
-        navigate('/'+data)
-    }
-    const [stateName,setStateName]  = useState()
-    const getStateWiseChart = (event) => {
+    
+    const [districtName,setDistrictName]  = useState()
+    const getDistrictWiseChart = (event) => {
         const { name, value } = event.target
-        setStateName(value)
+        setDistrictName(value)
         setBarChartData(
             {
                 
@@ -107,8 +122,21 @@ function Covid19IndiaTracker()
                 },
                 series: [
                     {
-                    name: ['Confirmed','Recovered','Deceased'],
-                    data: [(originalData[value]['total'].confirmed),(originalData[value]['total'].recovered),(originalData[value]['total'].deceased)],
+                        name: ['Confirmed','Recovered','Deceased'],
+                        data: [
+                            (originalData[state]['districts'][value]['total'].confirmed)?
+                            originalData[state]['districts'][value]['total'].confirmed
+                            :
+                            '0',
+                            (originalData[state]['districts'][value]['total'].recovered)?
+                            originalData[state]['districts'][value]['total'].recovered
+                            :
+                            '0',
+                            (originalData[state]['districts'][value]['total'].deceased)?
+                            originalData[state]['districts'][value]['total'].deceased
+                            :
+                            '0'
+                        ],
                     }
                 ]
             }
@@ -116,9 +144,9 @@ function Covid19IndiaTracker()
     }
 
     
-    // Function to Display State wise Data
+    // Function to Display District wise Data
 
-    const DisplayStateList = () => {
+    const DisplayDistrictList = () => {
         return(
             <div>
                 <div className="col-sm-12">
@@ -127,7 +155,7 @@ function Covid19IndiaTracker()
                             <table className="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>State</th>
+                                        <th>District</th>
                                         <th>Confirmed</th>
                                         <th>Recovered</th>
                                         <th>Deceased</th>
@@ -138,17 +166,58 @@ function Covid19IndiaTracker()
                                 </thead>
                                 <tbody>
                                 {
-                                    Object.keys(originalData).map((data)=>(
+                                    Object.keys(originalData[state]['districts']).map((data)=>(
                                         (data!='TT')?
-                                        
-                                            <tr onClick={()=>goToStatePage(data)} onMouseEnter={(event, value) => { getStateWiseChart({ target: { name: "table", value: data } }) }}>
-                                                <td>{stateList[data]}</td>
-                                                <td>{originalData[data]['total'].confirmed.toLocaleString()}</td>
-                                                <td>{originalData[data]['total'].recovered.toLocaleString()}</td>
-                                                <td>{originalData[data]['total'].deceased.toLocaleString()}</td>
-                                                <td>{originalData[data]['total'].tested.toLocaleString()}</td>
-                                                <td>{originalData[data]['total'].vaccinated1.toLocaleString()}</td>
-                                                <td>{originalData[data]['total'].vaccinated2.toLocaleString()}</td>
+                                            <tr onMouseEnter={(event, value) => { getDistrictWiseChart({ target: { name: "table", value: data } }) }}>
+                                                <td>{data}</td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].confirmed)?
+                                                        originalData[state]['districts'][data]['total'].confirmed.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].recovered)?
+                                                        originalData[state]['districts'][data]['total'].recovered.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }    
+                                                </td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].deceased)?
+                                                        originalData[state]['districts'][data]['total'].deceased.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].tested)?
+                                                        originalData[state]['districts'][data]['total'].tested.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].vaccinated1)?
+                                                        originalData[state]['districts'][data]['total'].vaccinated1.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        (originalData[state]['districts'][data]['total'].vaccinated2)?
+                                                        originalData[state]['districts'][data]['total'].vaccinated2.toLocaleString()
+                                                        :
+                                                        '0'
+                                                    }
+                                                </td>
                                             </tr>
                                         :
                                             ''
@@ -163,13 +232,12 @@ function Covid19IndiaTracker()
                         </div>
                         <div className="col-sm-3">
                             <div className="col-sm-12">
-                                <select className="form-select" value={stateName} onChange={getStateWiseChart}>
+                                <select className="form-select" value={districtName} onChange={getDistrictWiseChart}>
                                     {
-                                        Object.keys(originalData).map((data)=>(
-                                            (data!='TT')?
-                                            <option value={data}>{stateList[data]}</option>
-                                            :
-                                            ''
+                                        Object.keys(originalData[state]['districts']).map((data)=>(
+                                            
+                                            <option value={data}>{data}</option>
+                                            
                                         ))
                                     }
                                 </select>
@@ -202,6 +270,8 @@ function Covid19IndiaTracker()
                         </div>
                     </nav>
                     <br/>  
+                    <h4 className='text-center'>{stateList[state]}</h4>
+                    <br/>
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-sm-8">
@@ -210,28 +280,28 @@ function Covid19IndiaTracker()
                                         <div className="text-center text-yellow border p-2 m-2">
                                             <small><b>Tested</b></small>
                                             <br/>
-                                            <h3 className="p-2">{(originalData["TT"]['total'].tested).toLocaleString()}</h3>
+                                            <h3 className="p-2">{(originalData[state]['total'].tested).toLocaleString()}</h3>
                                         </div>
                                     </div>
                                     <div className="col-sm-3">
                                         <div className="text-center text-red border p-2 m-2">
                                             <small><b>Confirmed</b></small>
                                             <br/>
-                                            <h3 className="p-2">{(originalData["TT"]['total'].confirmed).toLocaleString()}</h3>
+                                            <h3 className="p-2">{(originalData[state]['total'].confirmed).toLocaleString()}</h3>
                                         </div>
                                     </div>
                                     <div className="col-sm-3">
                                         <div className="text-center text-green border p-2 m-2">
                                             <small><b>Recovered</b></small>
                                             <br/>
-                                            <h3 className="p-2">{(originalData["TT"]['total'].recovered).toLocaleString()}</h3>
+                                            <h3 className="p-2">{(originalData[state]['total'].recovered).toLocaleString()}</h3>
                                         </div>
                                     </div>
                                     <div className="col-sm-3">
                                         <div className="text-center text-grey border p-2 m-2">
                                             <small><b>Deceased</b></small>
                                             <br/>
-                                            <h3 className="p-2">{(originalData["TT"]['total'].deceased).toLocaleString()}</h3>
+                                            <h3 className="p-2">{(originalData[state]['total'].deceased).toLocaleString()}</h3>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +315,7 @@ function Covid19IndiaTracker()
                                                     labels: ['Tested','Confirmed','Recovered','Deceased'],
                                                     datasets: [
                                                     {
-                                                        data: [(originalData["TT"]['total'].tested),(originalData["TT"]['total'].confirmed),(originalData["TT"]['total'].recovered),(originalData["TT"]['total'].deceased)],
+                                                        data: [(originalData[state]['total'].tested),(originalData[state]['total'].confirmed),(originalData[state]['total'].recovered),(originalData[state]['total'].deceased)],
                                                         backgroundColor: [
                                                         '#ffd900','#ff001e','#16e000','#8b8b8b'
                                                         ],
@@ -264,11 +334,11 @@ function Covid19IndiaTracker()
 
                                 <marquee className="text-primary">
                                     <small><b>1st Dose Vaccination</b></small>
-                                    <b className="p-2">{(originalData["TT"]['total'].vaccinated1).toLocaleString()} &</b>
+                                    <b className="p-2">{(originalData[state]['total'].vaccinated1).toLocaleString()} &</b>
                                 
                                     
                                     <small><b>2nd Dose Vaccination</b></small>
-                                    <b className="p-2">{(originalData["TT"]['total'].vaccinated2).toLocaleString()}</b>
+                                    <b className="p-2">{(originalData[state]['total'].vaccinated2).toLocaleString()}</b>
                                 </marquee>
                             </div>
                             
@@ -277,24 +347,9 @@ function Covid19IndiaTracker()
                     </div>
                     <br/>
                     
-                    <DisplayStateList />
+                    <DisplayDistrictList />
 
-                    <div class="modal fade" id="myModal" role="dialog">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">District Wise List</h4>
-                                </div>
-                                <div class="modal-body">
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 :
                 ''
@@ -304,4 +359,4 @@ function Covid19IndiaTracker()
     );
 }
 
-export default Covid19IndiaTracker;
+export default StateWiseListPage;
