@@ -10,14 +10,14 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import '../static/css/color.css'
 import '../static/css/main.css'
 import stateList from  '../static/json/stateList.json'
+// Importing Navbar
+import Navbar from './components/navbar';
+// Importing Footer
+import Footer from './components/footer';
 
 // Importing Bootstrap Packages
-// import bootstrap from 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap/dist/js/bootstrap.bundle'
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'font-awesome/css/font-awesome.min.css'; 
-
+// Importing Apexchart Packages
 import Chart from "react-apexcharts";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -141,7 +141,7 @@ function Covid19IndiaTracker()
                                     Object.keys(originalData).map((data)=>(
                                         (data!='TT')?
                                         
-                                            <tr onClick={()=>goToStatePage(data)} onMouseEnter={(event, value) => { getStateWiseChart({ target: { name: "table", value: data } }) }}>
+                                            <tr style={{cursor:"pointer"}} onClick={()=>goToStatePage(data)} onMouseEnter={(event, value) => { getStateWiseChart({ target: { name: "table", value: data } }) }}>
                                                 <td>{stateList[data]}</td>
                                                 <td>{originalData[data]['total'].confirmed.toLocaleString()}</td>
                                                 <td>{originalData[data]['total'].recovered.toLocaleString()}</td>
@@ -196,11 +196,7 @@ function Covid19IndiaTracker()
         <div>
             {(dataStatus)?
                 <div className="container-fluid">
-                    <nav class="navbar navbar-expand-sm navbar-dark">
-                        <div class="container-fluid">
-                            <a class="navbar-brand" href="#"><small style={{fontSize:"15px"}} className="text-red">COVID19INDIA</small> <b className="text-primary">Tracker</b></a>
-                        </div>
-                    </nav>
+                    <Navbar/>
                     <br/>  
                     <div className="container">
                         <div className="row justify-content-center">
@@ -279,22 +275,7 @@ function Covid19IndiaTracker()
                     
                     <DisplayStateList />
 
-                    <div class="modal fade" id="myModal" role="dialog">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">District Wise List</h4>
-                                </div>
-                                <div class="modal-body">
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Footer />
                 </div>
                 :
                 ''

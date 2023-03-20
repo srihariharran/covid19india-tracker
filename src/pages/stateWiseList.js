@@ -10,14 +10,14 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import '../static/css/color.css'
 import '../static/css/main.css'
 import stateList from  '../static/json/stateList.json'
-
+// Importing Navbar
+import Navbar from './components/navbar';
+// Importing Footer
+import Footer from './components/footer';
 // Importing Bootstrap Packages
-// import bootstrap from 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.bundle'
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'font-awesome/css/font-awesome.min.css'; 
-
+// Importing Apexchart Packages
 import Chart from "react-apexcharts";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -264,11 +264,7 @@ function StateWiseListPage()
         <div>
             {(dataStatus)?
                 <div className="container-fluid">
-                    <nav class="navbar navbar-expand-sm navbar-dark">
-                        <div class="container-fluid">
-                            <a class="navbar-brand" href="#"><small style={{fontSize:"15px"}} className="text-red">COVID19INDIA</small> <b className="text-primary">Tracker</b></a>
-                        </div>
-                    </nav>
+                    <Navbar />
                     <br/>  
                     <h4 className='text-center'>{stateList[state]}</h4>
                     <br/>
@@ -349,6 +345,7 @@ function StateWiseListPage()
                     
                     <DisplayDistrictList />
 
+                    <Footer />
                     
                 </div>
                 :
