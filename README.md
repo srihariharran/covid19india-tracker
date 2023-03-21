@@ -2,6 +2,8 @@
 
 This project will give details about the statistics of covid 19 for india using [COVID19-India API] (https://data.covid19india.org/).
 
+<a href="https://covid19india-tracker.vercel.app/"> Demo </a>
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
